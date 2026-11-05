@@ -1,0 +1,3 @@
+package br.com.elyon.audit;
+import org.junit.jupiter.api.Test;import static org.junit.jupiter.api.Assertions.*;
+class ProfileServiceTest {@Test void acceptsHandleAndUrl(){assertEquals("elyon",ProfileService.username("@elyon"));assertEquals("elyon",ProfileService.username("https://www.instagram.com/elyon/"));}@Test void rejectsOtherHostsAndInjection(){assertThrows(IllegalArgumentException.class,()->ProfileService.username("https://evil.com/test"));assertThrows(IllegalArgumentException.class,()->ProfileService.username("abc){token}"));}@Test void acceptsInstagramLimits(){assertEquals("a.b_c",ProfileService.username(" @a.b_c "));assertThrows(IllegalArgumentException.class,()->ProfileService.username("@perfil-invalido"));}}

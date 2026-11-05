@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gestão de Tráfego · ELYON</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><a class="brand" href="/"><img src="/images/elyon-logo.png" alt="ELYON Marketing e Tecnologia"></a><nav><a href="/">Análise de perfil</a><a class="active" href="/trafego">Gestão de Tráfego</a></nav></header>
+<main>
+    <div class="eyebrow">MÓDULO / GESTÃO DE TRÁFEGO</div><h1>Campanhas Meta.<br><em>Controle centralizado.</em></h1>
+    <p class="lead">Conecte as contas autorizadas pelos clientes e acompanhe campanhas e resultados sem sair da plataforma.</p>
+    <div class="alert" th:if="${error}" th:text="${error}"></div><div class="success" th:if="${success}" th:text="${success}"></div>
+    <section class="panel setup-panel" th:if="${!configured}"><span class="tag">CONFIGURAÇÃO PENDENTE</span><h2>Integração Meta ainda não configurada</h2>
+        <p>Defina <code>META_APP_ID</code>, <code>META_APP_SECRET</code>, <code>META_REDIRECT_URI</code> e uma chave Base64 de 32 bytes em <code>META_TOKEN_ENCRYPTION_KEY</code>. Cadastre a mesma URL de retorno no aplicativo Meta.</p>
+        <p><strong>Versão configurada:</strong> <span th:text="${graphVersion}"></span>. Para clientes externos, a Meta também exige as permissões e revisões aplicáveis.</p>
+    </section>
+    <div class="traffic-grid">
+        <section class="panel"><h2>Conectar novo cliente</h2><p>A autorização ocorre na Meta. A senha do cliente nunca passa pelo sistema.</p>
+            <form th:action="@{/trafego/conectar}" method="get"><label for="clientName">Nome do cliente</label><input id="clientName" name="clientName" maxlength="120" required placeholder="Ex.: Studio Monne"><button class="primary" th:disabled="${!configured}">Conectar conta Meta →</button></form>
+        </section>
+        <section class="panel"><h2>Clientes conectados</h2><p th:if="${#lists.isEmpty(connections)}">Nenhuma conta conectada até o momento.</p>
+            <a class="connection-card" th:each="connection : ${connections}" th:href="@{/trafego/{id}(id=${connection.id})}"><span><strong th:text="${connection.clientName}"></strong><small th:text="${connection.metaUserName}"></small></span><b>Ver contas →</b></a>
+        </section>
+    </div>
+    <section class="panel"><h2>Segurança operacional</h2><div class="security-points"><span>✓ Tokens criptografados</span><span>✓ OAuth com validação de estado</span><span>✓ Campanhas novas sempre pausadas</span><span>✓ Dados separados por cliente</span></div></section>
+</main><footer>ELYON · Gestão de tráfego com governança.</footer>
+</body></html>

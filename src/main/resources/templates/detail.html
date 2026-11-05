@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Diagnóstico · ELYON</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <header><a class="brand" href="/" aria-label="ELYON - Página inicial"><img src="/images/elyon-logo.png"
+                alt="ELYON Marketing e Tecnologia"></a><nav><span>Instagram Intelligence</span><a href="/">Nova análise ↗</a></nav>
+    </header>
+    <main>
+        <div class="eyebrow" th:text="${audit.source}"></div>
+        <h1 th:text="${'Diagnóstico de @'+audit.username}"></h1>
+        <p class="note" th:text="${'Coleta / envio: '+audit.created}"></p>
+        <div th:if="${r == null}" class="alert" th:text="${audit.error != null ? audit.error : audit.status}"></div>
+        <div th:if="${r != null}">
+            <section class="metrics" aria-label="Métricas públicas do perfil">
+                <article class="metric-card"><span>Seguidores</span><strong
+                        th:text="${audit.followerCount != null ? #numbers.formatInteger(audit.followerCount, 1, 'POINT') : 'Não disponível'}"></strong><small>Quantidade pública coletada</small></article>
+                <article class="metric-card"><span>Seguindo</span><strong
+                        th:text="${audit.followingCount != null ? #numbers.formatInteger(audit.followingCount, 1, 'POINT') : 'Não disponível'}"></strong><small>Perfis que esta conta segue</small></article>
+            </section>
+            <p class="lead" th:text="${r.path('resumo').asText()}"></p>
+            <section class="panel">
+                <h2>O que esta análise considera</h2>
+                <ul>
+                    <li th:each="l : ${r.path('limitacoes')}" th:text="${l.asText()}"></li>
+                </ul>
+                <details>
+                    <summary>Consultar evidências utilizadas</summary>
+                    <pre th:text="${audit.evidence}"></pre>
+                </details>
+                <div th:if="${!r.path('fontes').isEmpty()}">
+                    <h3>Fontes consultadas</h3>
+                    <ul>
+                        <li th:each="fonte : ${r.path('fontes')}"><a th:href="${fonte.path('url').asText()}"
+                                th:text="${fonte.path('titulo').asText()}" target="_blank" rel="noopener noreferrer"></a></li>
+                    </ul>
+                </div>
+            </section>
+            <h2>Prioridades de melhoria</h2>
+            <div class="recommendations">
+                <article class="panel" th:each="item : ${r.path('recomendacoes')}"><span class="tag"
+                        th:text="${item.path('prioridade').asText()}"></span>
+                    <h3 th:text="${item.path('area').asText()}"></h3><small>EVIDÊNCIA</small>
+                    <p th:text="${item.path('evidencia').asText()}"></p><small>AÇÃO RECOMENDADA</small>
+                    <p th:text="${item.path('acao').asText()}"></p>
+                </article>
+            </div>
+            <h2>Antes e depois proposto</h2>
+            <p>Simulação editorial para aprovação. As peças abaixo são esboços de conteúdo, não artes finais ou
+                resultados alcançados.</p>
+            <div class="two comparison-grid">
+                <section class="panel comparison-card"><span class="tag">ANTES · PERFIL ATUAL</span>
+                    <h3>Como o perfil foi encontrado</h3>
+                    <p class="comparison-note">Captura real do perfil público no momento da análise. Clique para ampliar.</p>
+                    <a class="screenshot-link" th:if="${audit.screenshot != null}" th:href="${audit.screenshot}" target="_blank"
+                        title="Abrir captura em tamanho completo"><img class="screenshot" th:src="${audit.screenshot}"
+                            alt="Captura atual do perfil analisado"></a>
+                    <p th:if="${audit.screenshot == null}">Nenhuma captura foi enviada. A aparência atual não foi
+                        reconstruída.</p>
+                </section>
+                <section class="panel comparison-card after-card"><span class="tag">DEPOIS · DIREÇÃO PROPOSTA</span>
+                    <div class="profile-preview"><div class="profile-avatar"><img src="/images/elyon-logo.png" alt=""></div>
+                        <div><h3 th:text="${'@'+audit.username}"></h3><p class="bio" th:text="${r.path('bioProposta').asText()}"></p></div>
+                    </div>
+                    <div class="identity-direction"><strong>Direção de identidade</strong><p th:text="${r.path('identidade').asText()}"></p></div>
+                    <div class="feed">
+                        <div th:each="post,stat : ${r.path('calendario')}"><span class="post-number" th:text="${stat.count}"></span><small
+                                th:text="${post.path('formato').asText()}"></small><strong
+                                th:text="${post.path('tema').asText()}"></strong><span class="post-mark">ELYON</span></div>
+                    </div>
+                </section>
+            </div>
+            <h2>Sua próxima sequência de conteúdo</h2>
+            <div class="recommendations">
+                <article class="panel" th:each="post,stat : ${r.path('calendario')}"><span class="tag"
+                        th:text="${'PUBLICAÇÃO '+stat.count}"></span>
+                    <h3 th:text="${post.path('tema').asText()}"></h3><b th:text="${post.path('formato').asText()}"></b>
+                    <p th:text="${post.path('objetivo').asText()}"></p>
+                    <p th:text="${post.path('direcaoVisual').asText()}"></p>
+                </article>
+            </div><button class="primary" onclick="window.print()">Imprimir / salvar PDF</button>
+        </div>
+    </main>
+    <footer>ELYON · Proposta sujeita à revisão profissional.</footer>
+</body>
+
+</html>

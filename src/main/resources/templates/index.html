@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ELYON · Instagram Intelligence</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <header><a class="brand" href="/" aria-label="ELYON - Página inicial"><img src="/images/elyon-logo.png"
+                alt="ELYON Marketing e Tecnologia"></a>
+        <nav><span>Instagram Intelligence</span>
+            <form th:action="@{/logout}" method="post"><button class="quiet">Sair</button></form>
+        </nav>
+    </header>
+    <main>
+        <div class="eyebrow">INSTAGRAM INTELLIGENCE / DIAGNÓSTICO</div>
+        <h1>Um olhar estratégico.<br><em>Um perfil com direção.</em></h1>
+        <p class="lead">Transforme evidências do Instagram em um plano de conteúdo e uma proposta visual para sua marca.
+        </p>
+        <div class="alert" th:if="${error}" th:text="${error}" role="alert"></div>
+        <div class="workspace">
+            <section class="panel">
+                <h2>Nova análise</h2>
+                <p>Informe somente o @. O sistema coleta os dados públicos disponíveis e prepara a análise.</p>
+                <form id="auditForm" th:action="@{/analisar}" method="post" enctype="multipart/form-data"><label
+                        for="username">Perfil do Instagram</label><input id="username" name="username"
+                        placeholder="@suaempresa" required maxlength="31" pattern="@[A-Za-z0-9._]{1,30}"
+                        title="Informe o perfil no formato @usuario" autocomplete="off">
+                    <input type="hidden" name="mode" value="automatic">
+                    <button class="primary" id="submit">Analisar perfil →</button>
+                    <p class="note" id="progress" aria-live="polite">O material será enviado à OpenAI para produzir o
+                        diagnóstico.</p>
+                </form>
+            </section>
+            <aside>
+                <div class="panel dark">
+                    <div class="eyebrow">DA OBSERVAÇÃO À AÇÃO</div>
+                    <h2>Clareza para decidir<br>o próximo passo.</h2>
+                    <ol>
+                        <li>Diagnóstico com evidências</li>
+                        <li>Melhorias por prioridade</li>
+                        <li>Bio e direção de identidade</li>
+                        <li>Sequência de 9 publicações</li>
+                        <li>Comparação antes e proposta</li>
+                    </ol><small>Sem promessa de resultados. Sem números inventados.</small>
+                </div>
+                <div class="panel">
+                    <h3>Histórico recente</h3>
+                    <p th:if="${#lists.isEmpty(audits)}">Suas análises aparecerão aqui.</p><a class="history"
+                        th:each="a : ${audits}" th:href="@{/analises/{id}(id=${a.id})}"><span><strong
+                                th:text="${'@'+a.username}"></strong><small th:if="${a.followerCount != null}"
+                                th:text="${#numbers.formatInteger(a.followerCount, 1, 'POINT')+' seguidores'}"></small></span><span
+                            th:text="${a.status}"></span></a>
+                </div>
+            </aside>
+        </div>
+    </main>
+    <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+        <section class="loading-card" role="status" aria-live="polite" aria-labelledby="loadingTitle">
+            <div class="loader-symbol" aria-hidden="true"></div>
+            <div class="eyebrow">ELYON INSTAGRAM INTELLIGENCE</div>
+            <h2 id="loadingTitle">Preparando sua análise</h2>
+            <p id="loadingMessage">Conectando ao perfil público informado…</p>
+            <div class="progress-track" role="progressbar" aria-label="Progresso da análise" aria-valuemin="0"
+                aria-valuemax="100" aria-valuenow="4" id="progressBar">
+                <span id="progressFill"></span>
+            </div>
+            <div class="progress-meta"><strong id="progressValue">4%</strong><span>Isso pode levar até três minutos</span></div>
+            <ol class="loading-steps">
+                <li class="active" id="stepCollect">Coletando informações públicas</li>
+                <li id="stepCapture">Preparando a captura do perfil</li>
+                <li id="stepAnalyze">Analisando posicionamento e conteúdo</li>
+                <li id="stepReport">Montando o diagnóstico final</li>
+            </ol>
+        </section>
+    </div>
+    <footer>ELYON · Estratégia, conteúdo e tecnologia.</footer>
+    <script>
+        document.getElementById('auditForm').addEventListener('submit', function () {
+            const button = document.getElementById('submit');
+            const overlay = document.getElementById('loadingOverlay');
+            const fill = document.getElementById('progressFill');
+            const value = document.getElementById('progressValue');
+            const bar = document.getElementById('progressBar');
+            const message = document.getElementById('loadingMessage');
+            const stages = [
+                {at: 4, message: 'Conectando ao perfil público informado…', step: 'stepCollect'},
+                {at: 26, message: 'Lendo seguidores, seguindo, bio e publicações…', step: 'stepCapture'},
+                {at: 52, message: 'Capturando a aparência atual do perfil…', step: 'stepAnalyze'},
+                {at: 72, message: 'A inteligência está avaliando as evidências…', step: 'stepReport'},
+                {at: 88, message: 'Organizando recomendações e proposta visual…', step: 'stepReport'}
+            ];
+            let progress = 4;
+            let stageIndex = 0;
+            button.disabled = true;
+            button.textContent = 'Analisando…';
+            overlay.classList.add('visible');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('is-loading');
+            const update = () => {
+                progress = Math.min(94, progress + (progress < 55 ? 2 : 1));
+                while (stageIndex + 1 < stages.length && progress >= stages[stageIndex + 1].at) stageIndex++;
+                const stage = stages[stageIndex];
+                fill.style.width = progress + '%';
+                value.textContent = progress + '%';
+                bar.setAttribute('aria-valuenow', progress);
+                message.textContent = stage.message;
+                document.querySelectorAll('.loading-steps li').forEach((item, index) => {
+                    item.classList.toggle('active', index <= stageIndex);
+                    item.classList.toggle('current', item.id === stage.step);
+                });
+            };
+            update();
+            window.setInterval(update, 1200);
+        });
+    </script>
+</body>
+
+</html>

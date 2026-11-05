@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      OPENAI_API_KEY: "${OPENAI_API_KEY:?Defina OPENAI_API_KEY}"
+      OPENAI_MODEL: "gpt-4.1-mini"
+      APP_PASSWORD: "${APP_PASSWORD:?Defina APP_PASSWORD}"
+      SPRING_DATASOURCE_URL: "jdbc:h2:file:/data/elyon"
+    volumes:
+      - elyon_data:/data
+    restart: unless-stopped
+volumes:
+  elyon_data:

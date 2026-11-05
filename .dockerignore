@@ -1,0 +1,5 @@
+compose.yaml
+.env*
+target/
+data/
+.git

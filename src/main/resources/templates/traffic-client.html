@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cliente Meta · ELYON</title><link rel="stylesheet" href="/style.css"></head>
+<body><header><a class="brand" href="/"><img src="/images/elyon-logo.png" alt="ELYON Marketing e Tecnologia"></a><nav><a href="/">Análise de perfil</a><a class="active" href="/trafego">Gestão de Tráfego</a></nav></header>
+<main><div class="eyebrow">CLIENTE META</div><h1 th:text="${connection.clientName}"></h1><p class="lead" th:text="${'Autorizado por '+connection.metaUserName}"></p>
+<div class="alert" th:if="${error}" th:text="${error}"></div><div class="success" th:if="${success}" th:text="${success}"></div>
+<section class="panel"><h2>Contas de anúncio</h2><p th:if="${accounts.isEmpty()}">A Meta não retornou contas de anúncio para este usuário.</p>
+    <div class="ad-accounts"><a class="ad-account" th:each="account : ${accounts}" th:href="@{/trafego/{id}/contas/{accountId}(id=${connection.id},accountId=${account.path('id').asText()})}"><span class="tag" th:text="${account.path('currency').asText('—')}"></span><h3 th:text="${account.path('name').asText()}"></h3><p th:text="${account.path('id').asText()}"></p><small th:text="${'Fuso: '+account.path('timezone_name').asText('não informado')}"></small></a></div>
+</section></main><footer>ELYON · Dados fornecidos pela Marketing API da Meta.</footer></body></html>
