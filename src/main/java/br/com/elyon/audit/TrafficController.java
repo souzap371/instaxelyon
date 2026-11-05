@@ -34,18 +34,23 @@ class TrafficController {
     }
 
     @GetMapping("/conectar")
-    String connect(@RequestParam String clientName, HttpSession session) {
-        if (!meta.configured() || !cipher.configured())
-            throw new IllegalArgumentException("Configure a integração Meta antes de conectar um cliente.");
-        String name = clientName == null ? "" : clientName.trim();
-        if (name.length() < 2 || name.length() > 120)
-            throw new IllegalArgumentException("Informe o nome do cliente.");
-        byte[] bytes = new byte[32];
-        random.nextBytes(bytes);
-        String state = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-        session.setAttribute("metaOAuthState", state);
-        session.setAttribute("metaClientName", name);
-        return "redirect:" + meta.authorizationUri(state);
+    String connect(@RequestParam String clientName, HttpSession session, RedirectAttributes flash) {
+        try {
+            if (!meta.configured() || !cipher.configured())
+                throw new IllegalArgumentException("Configure a integração Meta antes de conectar um cliente.");
+            String name = clientName == null ? "" : clientName.trim();
+            if (name.length() < 2 || name.length() > 120)
+                throw new IllegalArgumentException("Informe o nome do cliente.");
+            byte[] bytes = new byte[32];
+            random.nextBytes(bytes);
+            String state = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+            session.setAttribute("metaOAuthState", state);
+            session.setAttribute("metaClientName", name);
+            return "redirect:" + meta.authorizationUri(state);
+        } catch (Exception ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/trafego";
+        }
     }
 
     @GetMapping("/callback")

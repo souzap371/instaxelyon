@@ -10,7 +10,7 @@
 
 <body>
     <header><a class="brand" href="/" aria-label="ELYON - Página inicial"><img src="/images/elyon-logo.png"
-                alt="ELYON Marketing e Tecnologia"></a><nav><span>Instagram Intelligence</span><a href="/">Nova análise ↗</a></nav>
+                alt="ELYON Marketing e Tecnologia"></a><nav><a class="active" href="/">Análise de perfil</a><a href="/trafego">Gestão de Tráfego</a><a href="/">Nova análise ↗</a></nav>
     </header>
     <main>
         <div class="eyebrow" th:text="${audit.source}"></div>
@@ -51,6 +51,27 @@
                     <p th:text="${item.path('acao').asText()}"></p>
                 </article>
             </div>
+            <th:block th:if="${r.path('perfilMelhorias').isArray()}"><h2>Plano de otimização do perfil</h2>
+            <p>Melhorias recomendadas a partir do material efetivamente encontrado.</p>
+            <div class="profile-improvements">
+                <article class="panel" th:each="item : ${r.path('perfilMelhorias')}"><span class="tag"
+                        th:text="${item.path('prioridade').asText()}"></span><h3 th:text="${item.path('area').asText()}"></h3>
+                    <small>SITUAÇÃO ATUAL</small><p th:text="${item.path('situacaoAtual').asText()}"></p>
+                    <small>MELHORIA INDICADA</small><p th:text="${item.path('recomendacao').asText()}"></p></article>
+            </div></th:block>
+            <th:block th:if="${r.path('publicosMeta').isObject()}"><h2>Públicos indicados para Meta Ads</h2>
+            <p class="note" th:text="${'Pesquisa atualizada em '+r.path('publicosMeta').path('atualizadoEm').asText()}"></p>
+            <div class="alert" th:text="${r.path('publicosMeta').path('aviso').asText()}"></div>
+            <div class="meta-audiences">
+                <article class="panel audience-card" th:each="tipo : ${ {'engajamento','trafego'} }" th:with="plano=${r.path('publicosMeta').path(tipo)}">
+                    <span class="tag" th:text="${tipo == 'engajamento' ? 'ENGAJAMENTO' : 'TRÁFEGO'}"></span>
+                    <h3 th:text="${plano.path('objetivo').asText()}"></h3>
+                    <dl><dt>Perfil ideal</dt><dd th:text="${plano.path('perfilIdeal').asText()}"></dd><dt>Localização</dt><dd th:text="${plano.path('localizacao').asText()}"></dd><dt>Faixa etária</dt><dd th:text="${plano.path('faixaEtariaJustificada').asText()}"></dd><dt>Posicionamentos</dt><dd th:text="${plano.path('posicionamentos').asText()}"></dd><dt>Criativo</dt><dd th:text="${plano.path('criativo').asText()}"></dd><dt>Otimização</dt><dd th:text="${plano.path('otimizacao').asText()}"></dd><dt>Teste recomendado</dt><dd th:text="${plano.path('teste').asText()}"></dd></dl>
+                    <h4>Interesses e sinais</h4><ul><li th:each="value : ${plano.path('interessesSinais')}" th:text="${value.asText()}"></li></ul>
+                    <h4>Públicos personalizados</h4><ul><li th:each="value : ${plano.path('publicosPersonalizados')}" th:text="${value.asText()}"></li></ul>
+                    <h4>Exclusões</h4><ul><li th:each="value : ${plano.path('exclusoes')}" th:text="${value.asText()}"></li></ul>
+                </article>
+            </div></th:block>
             <h2>Antes e depois proposto</h2>
             <p>Simulação editorial para aprovação. As peças abaixo são esboços de conteúdo, não artes finais ou
                 resultados alcançados.</p>
@@ -65,14 +86,14 @@
                         reconstruída.</p>
                 </section>
                 <section class="panel comparison-card after-card"><span class="tag">DEPOIS · DIREÇÃO PROPOSTA</span>
-                    <div class="profile-preview"><div class="profile-avatar"><img src="/images/elyon-logo.png" alt=""></div>
+                    <div class="profile-preview"><div class="profile-avatar"><img th:if="${audit.profileImage != null}" th:src="${audit.profileImage}" alt="Imagem atual do perfil do cliente"><span th:if="${audit.profileImage == null}">@</span></div>
                         <div><h3 th:text="${'@'+audit.username}"></h3><p class="bio" th:text="${r.path('bioProposta').asText()}"></p></div>
                     </div>
                     <div class="identity-direction"><strong>Direção de identidade</strong><p th:text="${r.path('identidade').asText()}"></p></div>
                     <div class="feed">
                         <div th:each="post,stat : ${r.path('calendario')}"><span class="post-number" th:text="${stat.count}"></span><small
                                 th:text="${post.path('formato').asText()}"></small><strong
-                                th:text="${post.path('tema').asText()}"></strong><span class="post-mark">ELYON</span></div>
+                                th:text="${post.path('tema').asText()}"></strong><span class="post-mark" th:text="${'@'+audit.username}"></span></div>
                     </div>
                 </section>
             </div>

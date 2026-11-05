@@ -11,7 +11,7 @@
 <body>
     <header><a class="brand" href="/" aria-label="ELYON - Página inicial"><img src="/images/elyon-logo.png"
                 alt="ELYON Marketing e Tecnologia"></a>
-        <nav><span>Instagram Intelligence</span>
+        <nav><a class="active" href="/">Análise de perfil</a><a href="/trafego">Gestão de Tráfego</a>
             <form th:action="@{/logout}" method="post"><button class="quiet">Sair</button></form>
         </nav>
     </header>
@@ -54,6 +54,11 @@
                                 th:text="${'@'+a.username}"></strong><small th:if="${a.followerCount != null}"
                                 th:text="${#numbers.formatInteger(a.followerCount, 1, 'POINT')+' seguidores'}"></small></span><span
                             th:text="${a.status}"></span></a>
+                    <nav class="pagination" th:if="${auditPage.totalPages > 1}" aria-label="Paginação do histórico">
+                        <a th:classappend="${auditPage.first} ? 'disabled'" th:href="${auditPage.first ? '#' : '/?page='+(auditPage.number-1)}">← Anterior</a>
+                        <span th:text="${'Página '+(auditPage.number+1)+' de '+auditPage.totalPages}"></span>
+                        <a th:classappend="${auditPage.last} ? 'disabled'" th:href="${auditPage.last ? '#' : '/?page='+(auditPage.number+1)}">Próxima →</a>
+                    </nav>
                 </div>
             </aside>
         </div>

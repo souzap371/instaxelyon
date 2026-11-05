@@ -33,7 +33,7 @@ class AiService {
         for (String image : images)
             content.add(Map.of("type", "input_image", "image_url", image));
         var body = Map.of("model", model, "store", false,
-                "instructions", instructions, "max_output_tokens", 6000, "text", reportFormat(), "input",
+                "instructions", instructions, "max_output_tokens", 9000, "text", reportFormat(), "input",
                 List.of(Map.of("role", "user", "content", content)));
         JsonNode report = parseReport(json, send(key, body));
         if (report instanceof com.fasterxml.jackson.databind.node.ObjectNode object)

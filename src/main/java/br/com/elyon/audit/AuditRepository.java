@@ -1,8 +1,8 @@
 package br.com.elyon.audit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import org.springframework.data.domain.*;
 
 interface AuditRepository extends JpaRepository<Audit, Long> {
-    List<Audit> findTop30ByOrderByCreatedDesc();
+    Page<Audit> findAllByOrderByCreatedDesc(Pageable pageable);
 }

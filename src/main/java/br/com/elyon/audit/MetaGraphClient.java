@@ -21,7 +21,7 @@ class MetaGraphClient {
         return present("META_APP_ID") && present("META_APP_SECRET") && present("META_REDIRECT_URI");
     }
     boolean writeEnabled() { return "true".equalsIgnoreCase(System.getenv("META_WRITE_ENABLED")); }
-    String version() { return System.getenv().getOrDefault("META_GRAPH_VERSION", "v23.0"); }
+    String version() { return System.getenv().getOrDefault("META_GRAPH_VERSION", "v26.0"); }
     String redirectUri() { return required("META_REDIRECT_URI"); }
 
     URI authorizationUri(String state) {

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
 import com.fasterxml.jackson.databind.*;
 import java.util.*;
 import java.io.*;
@@ -33,8 +34,11 @@ class AuditController {
     }
 
     @GetMapping("/")
-    String home(Model m) {
-        m.addAttribute("audits", repo.findTop30ByOrderByCreatedDesc());
+    String home(@RequestParam(defaultValue = "0") int page, Model m) {
+        int safePage = Math.max(0, page);
+        var audits = repo.findAllByOrderByCreatedDesc(PageRequest.of(safePage, 8));
+        m.addAttribute("audits", audits.getContent());
+        m.addAttribute("auditPage", audits);
         m.addAttribute("metaReady",
                 System.getenv("META_ACCESS_TOKEN") != null && System.getenv("META_IG_USER_ID") != null);
         return "index";

@@ -38,7 +38,7 @@ class ProfileService {
     private String collectMeta(String username, String token, String id) throws Exception {
         String fields = "business_discovery.username(" + username
                 + "){username,name,biography,website,followers_count,media_count,profile_picture_url,media.limit(24){caption,like_count,comments_count,timestamp,media_type,permalink}}";
-        String version = System.getenv().getOrDefault("META_GRAPH_VERSION", "v23.0");
+        String version = System.getenv().getOrDefault("META_GRAPH_VERSION", "v26.0");
         if (!version.matches("v[0-9]+[.][0-9]+"))
             throw new IllegalArgumentException("Versão Meta inválida");
         var uri = URI.create("https://graph.facebook.com/" + version + "/" + id + "?fields="
